@@ -8,7 +8,6 @@ let filtered_products = [];
 let brand_filter = x => true;
 let reasonable_filter = x => true;
 let recent_filter = x => true;
-let favoris_filter = x => true;
 
 
 // inititiate selectors
@@ -25,8 +24,6 @@ const spanP50 = document.querySelector('#p50');
 const spanP90 = document.querySelector('#p90');
 const spanP95 = document.querySelector('#p95');
 const spanLastRelease = document.querySelector('#last-release');
-const favorisInput = document.querySelector('#favoris');
-
 
 
 // Update brands choice
@@ -49,7 +46,7 @@ function update_brands_name(){
 }
 
 const apply_all_filters = (products) =>{
-  let filter = [brand_filter, reasonable_filter, recent_filter, favoris_filter]
+  let filter = [brand_filter, reasonable_filter, recent_filter]
   filter.forEach(f =>{
     products = products.filter(f)
   })
@@ -77,7 +74,7 @@ const setCurrentProducts = ({result, meta}) => {
 const fetchProducts = async (page = 1, size = 12) => {
   try {
     const response = await fetch(
-      `https://clear-fashion-api.vercel.app?page=${page}&size=${size}`
+      `https://api-clearfashion.vercel.app/products/?page=${page}&size=${size}`
     );
     const body = await response.json();
 
@@ -102,12 +99,10 @@ const renderProducts = products => {
   const div = document.createElement('div');
   const template = products
     .map(product => {
-      let favoris = JSON.parse(localStorage.getItem('favoris'))
-      let content = favoris!=null?(favoris.filter(x => x.uuid == product.uuid).length>0?'⭕':'⭐'):'⭐';
+    
       let url = product.photo.includes('https:')? product.photo:'https:'+product.photo;
       return `
-      <div class="product" id=${product.uuid}>
-      <button onclick="addFavoris('${product.uuid}','${content}')">${content}</button>
+      <div class="product">
         <span>${product.brand.charAt(0).toUpperCase() + product.brand.slice(1)}</span>
         <a href="${product.link}">${product.name}</a>
         <span>${product.price}€</span>
@@ -263,42 +258,6 @@ selectSort.addEventListener('change', event=>{
       break;
   }
 
-  filtered_products = apply_all_filters(currentProducts)
-  render(filtered_products, currentPagination);
-});
-
-// Feature 12 favoris
-
-function addFavoris(id, content){
-  let x = currentProducts.filter(x => x.uuid == id)[0]
-  let favoris = JSON.parse(localStorage.getItem('favoris'))
-  
-  if(favoris == null){
-    localStorage.setItem('favoris', JSON.stringify([x]));
-  }
-  else if(favoris.filter(x => x.uuid == id).length==0){
-    favoris.push(x);
-    localStorage.setItem('favoris', JSON.stringify(favoris));
-  }
-  else{
-    favoris = favoris.filter(x => x.uuid != id)
-    localStorage.setItem('favoris', JSON.stringify(favoris));
-  }
-  render(filtered_products, currentPagination);
-}
-
-// Feature 13: filter favoris 
-
-
-favorisInput.addEventListener('change', function(){
-
-  if(this.checked){
-    let favoris = JSON.parse(localStorage.getItem('favoris'))
-    favoris_filter = favoris!=null? x =>favoris.filter(y => y.uuid == x.uuid).length>0:x=>false;
-  }
-  else{
-    favoris_filter = x =>true;
-  }
   filtered_products = apply_all_filters(currentProducts)
   render(filtered_products, currentPagination);
 });

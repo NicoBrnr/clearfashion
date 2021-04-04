@@ -88,7 +88,7 @@ app.get('/products', async(request, response) => {
 
 		response.send({"page" :true,"success" :true, "data" : { "meta" :{"currentPage":page, "pageSize":size, 
 			"pageCount":prod.length, "count":result.length}, "result":prod}});
-		//response.send({'a': prod});
+
 	}catch(e){
 		response.send(e);
 	}
@@ -96,5 +96,5 @@ app.get('/products', async(request, response) => {
 })
 
 app.listen(PORT);
-//db.getDB()
+
 console.log(`📡 Running on port ${PORT}`);
