@@ -4,7 +4,8 @@ const fs = require('fs');
 
 const MONGODB_DB_NAME = 'clearfashion';
 const MONGODB_COLLECTION = 'products';
-const MONGODB_URI = process.env.MONGODB_URI;
+//const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI ="mongodb+srv://admin:eedzab@clearfashion.0ouc1.mongodb.net/clearfashion_db?retryWrites=true&w=majority";
 
 let client = null;
 let database = null;
@@ -19,7 +20,7 @@ const getDB = module.exports.getDB = async () => {
       console.log('💽  Already Connected');
       return database;
     }
-
+    `mongodb+srv://admin:eedzab@clearfashion.0ouc1.mongodb.net/clearfashion_db?retryWrites=true&w=majority`
     client = await MongoClient.connect(MONGODB_URI, {'useNewUrlParser': true});
     database = client.db(MONGODB_DB_NAME);
 
